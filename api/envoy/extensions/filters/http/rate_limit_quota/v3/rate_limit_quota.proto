@@ -62,8 +62,8 @@ message RateLimitQuotaGroup {
     message DenyResponseSettings {
       // Status code to use to fail requests when quota is exceeded.
       // TODO: figure out the right defaults for these fields!
-      int32 http_status_code = 1;              // For HTTP requests.
-      google.rpc.Status deny_grpc_status = 2;  // For gRPC requests.
+      int32 http_status_code = 1;             // For HTTP requests.
+      google.rpc.Status deny_grpc_status = 2; // For gRPC requests.
 
       // A response body to send to the downstream client when the response code
       // is not OK.
