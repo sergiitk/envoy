@@ -5,7 +5,6 @@ package envoy.service.rate_limit_quota.v3alpha;
 import "envoy/config/core/v3/base.proto";
 import "envoy/config/core/v3/config_source.proto";
 
-import "google/api/expr/v1alpha1/syntax.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
