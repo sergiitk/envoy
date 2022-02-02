@@ -311,6 +311,7 @@ RFC
 RHS
 RLE
 RLS
+RLQS
 RNG
 RPC
 RSA
@@ -617,6 +618,7 @@ deleter
 delim
 denylist
 deque
+dequeuing
 deprecations
 dereference
 dereferences
