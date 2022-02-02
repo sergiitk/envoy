@@ -4,10 +4,12 @@ package envoy.extensions.filters.http.rate_limit_quota.v3;
 
 import "envoy/config/core/v3/base.proto";
 import "envoy/config/core/v3/config_source.proto";
+
 import "google/protobuf/duration.proto";
 import "google/rpc/status.proto";
-import "xds/type/matcher/v3/matcher.proto";
+
 import "xds/annotations/v3/status.proto";
+import "xds/type/matcher/v3/matcher.proto";
 
 import "udpa/annotations/status.proto";
 import "udpa/annotations/versioning.proto";
@@ -24,13 +26,12 @@ option (xds.annotations.v3.file_status).work_in_progress = true;
 // Rate limit :ref:`configuration overview <config_http_filters_rate_limit_quota>`.
 // [#extension: envoy.filters.http.rate_limit_quota]
 
-// [#next-free-field: 4]
-// [#not-implemented-hide:]
+//  [#not-implemented-hide:]
 message RateLimitQuota {
   // Configuration for the gRPC service that hosts an external rate limit
   // provider. If not specified, any calls to the rate limit service will
   // immediately return success.
-  envoy.config.core.v3.ConfigSource quota_server = 1;
+  config.core.v3.ConfigSource quota_server = 1;
 
   // The application domain to use when calling the service.
   string domain = 2;
@@ -41,10 +42,6 @@ message RateLimitQuota {
 
 // [#not-implemented-hide:]
 message RateLimitQuotaGroup {
-  // Group name. Must be unique within the application domain.
-  string name = 1;
-  // subgroup_key.
-
   // When provided, CEL expression will be used to extract subgroup_key (string)
   // from the request. In such cases, each unique subgroup gets its own bucket.
   // TODO(sergiitk): ????
@@ -52,30 +49,6 @@ message RateLimitQuotaGroup {
 
   // [#not-implemented-hide:]
   message RateLimitQuotaGroupSettings {
-    // The interval at which the data plane is to send usage info for the
-    // request of this group.
-    // When the first request is matched to a group without an active
-    // assignment, the data plane immediately sends QuotaUsageReport to
-    // the server, signaling it's subscribed for the quota assignments
-    // in that group. After that, the data plane is to submit the report
-    // with the given reporting internal.
-    google.protobuf.Duration reporting_interval = 1;
-
-    message DenyResponseSettings {
-      // Status code to use to fail requests when quota is exceeded.
-      // TODO: figure out the right defaults for these fields!
-      int32 http_status_code = 1;             // For HTTP requests.
-      google.rpc.Status deny_grpc_status = 2; // For gRPC requests.
-
-      // A response body to send to the downstream client when the response code
-      // is not OK.
-      bytes http_raw_body = 3;
-
-      // A list of headers to add to the response when the request is throttled.
-      repeated envoy.config.core.v3.HeaderValue response_headers_to_add = 4;
-    }
-    DenyResponseSettings deny_response_settings = 4;
-
     // How the data plane should treat requests matching this group
     // without active quota assignment, for example:
     // - quota server hasn't returned the first quota assignment
@@ -83,6 +56,7 @@ message RateLimitQuotaGroup {
     //   the new assignment.
     enum NoAssignmentBehavior {
       UNSPECIFIED = 0;
+
       // Queue requests until we receive a quota assignment for the group.
       // The data plane maintains a separate queue for each group that has
       // pending requests (or per each subgroup, when configured).
@@ -93,12 +67,30 @@ message RateLimitQuotaGroup {
       // to impose constraints on the maximum number of pending requests
       // in the queue.
       QUEUE = 1;
+
       // Allow requests until we receive a quota assignment for the group.
       ALLOW = 2;
+
       // Deny requests until we receive a quota assignment for the group.
       DENY = 3;
     }
-    NoAssignmentBehavior no_assignment_behavior = 2;
+
+    message DenyResponseSettings {
+      // Status code to use to fail requests when quota is exceeded.
+      // TODO: figure out the right defaults for these fields!
+      int32 http_status_code = 1;
+      // For HTTP requests.
+
+      google.rpc.Status deny_grpc_status = 2;
+      // For gRPC requests.
+
+      // A response body to send to the downstream client when the response code
+      // is not OK.
+      bytes http_raw_body = 3;
+
+      // A list of headers to add to the response when the request is throttled.
+      repeated config.core.v3.HeaderValue response_headers_to_add = 4;
+    }
 
     message NoAssignmentQueueSettings {
       // Limit the length of the queue.
@@ -114,10 +106,28 @@ message RateLimitQuotaGroup {
       // or allow them.
       bool deny_discarded_requests = 3;
     }
+
+    // The interval at which the data plane is to send usage info for the
+    // request of this group.
+    // When the first request is matched to a group without an active
+    // assignment, the data plane immediately sends QuotaUsageReport to
+    // the server, signaling it's subscribed for the quota assignments
+    // in that group. After that, the data plane is to submit the report
+    // with the given reporting internal.
+    google.protobuf.Duration reporting_interval = 1;
+
+    DenyResponseSettings deny_response_settings = 4;
+
+    NoAssignmentBehavior no_assignment_behavior = 2;
+
     // When NoAssignmentBehavior.QUEUE behavior is selected, this settings
     // can be used as a safe-guard against exhausting memory.
     NoAssignmentQueueSettings no_assignment_queue_settings = 3;
   }
+
+  // Group name. Must be unique within the application domain.
+  string name = 1;
+  // subgroup_key.
 
   // Configures quota group: report interval, no assignment, deny settings, etc.
   RateLimitQuotaGroupSettings settings = 3;

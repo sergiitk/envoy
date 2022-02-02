@@ -5,6 +5,7 @@ package envoy.service.rate_limit_quota.v3;
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
+
 import "xds/annotations/v3/status.proto";
 
 import "udpa/annotations/status.proto";
@@ -23,36 +24,45 @@ option (xds.annotations.v3.file_status).work_in_progress = true;
 
 service RateLimitQuotaService {
   rpc StreamRateLimitQuotas(stream RateLimitQuotaUsageReport)
-      returns (stream RateLimitQuotaAssignments);
+      returns (stream RateLimitQuotaAssignments) {
+  }
 }
 
 message RateLimitQuotaUsageReport {
-  // All quota requests must specify the domain. This enables sharing the quota
-  // server between different applications without fear of overlap.
-  // E.g., "envoy".
-  string domain = 1;
-
+  // [#next-free-field: 7]
   message GroupQuotaUsage {
     // The name of the group.
     string group_name = 1;
+
     // Subgroup key.
     string subgroup_key = 2;
+
     // Time elapsed since the last report.
     google.protobuf.Duration time_elapsed = 3;
 
     // Requests the data plane has allowed through.
     uint64 num_requests_allowed = 4;
+
     // Requests throttled.
     uint64 num_requests_denied = 5;
+
     // Requests in the queue waiting for the assignment.
     uint64 num_requests_queued = 6;
   }
+
+  // All quota requests must specify the domain. This enables sharing the quota
+  // server between different applications without fear of overlap.
+  // E.g., "envoy".
+  string domain = 1;
+
   repeated GroupQuotaUsage group_usage = 2;
 }
 
 message RateLimitQuotaAssignments {
+  // [#next-free-field: 7]
   message QuotaAssignment {
     string group_name = 1;
+
     string subgroup_key = 2;
 
     // The number of requests allowed per each refill_rate interval.
