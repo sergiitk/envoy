@@ -114,13 +114,13 @@ message RateLimitQuotaGroup {
     // with the given reporting internal.
     google.protobuf.Duration reporting_interval = 1;
 
-    DenyResponseSettings deny_response_settings = 4;
+    DenyResponseSettings deny_response_settings = 2;
 
-    NoAssignmentBehavior no_assignment_behavior = 2;
+    NoAssignmentBehavior no_assignment_behavior = 3;
 
     // When NoAssignmentBehavior.QUEUE behavior is selected, this settings
     // can be used as a safe-guard against exhausting memory.
-    NoAssignmentQueueSettings no_assignment_queue_settings = 3;
+    NoAssignmentQueueSettings no_assignment_queue_settings = 4;
   }
 
   // Group name. Must be unique within the application domain.
@@ -128,7 +128,7 @@ message RateLimitQuotaGroup {
   // subgroup_key.
 
   // Configures quota group: report interval, no assignment, deny settings, etc.
-  RateLimitQuotaGroupSettings settings = 3;
+  RateLimitQuotaGroupSettings settings = 2;
 }
 
 message RateLimitQuotaPerRoute {
