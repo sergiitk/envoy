@@ -22,11 +22,11 @@ option go_package = "github.com/envoyproxy/go-control-plane/envoy/extensions/fil
 option (udpa.annotations.file_status).package_version_status = ACTIVE;
 option (xds.annotations.v3.file_status).work_in_progress = true;
 
+// [#not-implemented-hide:]
 // [#protodoc-title: Rate Limit Quota]
 // Rate limit :ref:`configuration overview <config_http_filters_rate_limit_quota>`.
 // [#extension: envoy.filters.http.rate_limit_quota]
 
-//  [#not-implemented-hide:]
 message RateLimitQuota {
   // Configuration for the gRPC service that hosts an external rate limit
   // provider. If not specified, any calls to the rate limit service will
@@ -40,14 +40,12 @@ message RateLimitQuota {
   xds.type.matcher.v3.Matcher quota_matchers = 3;
 }
 
-// [#not-implemented-hide:]
 message RateLimitQuotaGroup {
   // When provided, CEL expression will be used to extract subgroup_key (string)
   // from the request. In such cases, each unique subgroup gets its own bucket.
   // TODO(sergiitk): ????
   //  envoy.type.v3alpha.CelExpression subgroup_key_expression = 2;
 
-  // [#not-implemented-hide:]
   message RateLimitQuotaGroupSettings {
     // How the data plane should treat requests matching this group
     // without active quota assignment, for example:
