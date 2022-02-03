@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package envoy.service.rate_limit_quota.v3;
 
+import "envoy/type/v3/token_bucket.proto";
+
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
@@ -23,19 +25,19 @@ option (xds.annotations.v3.file_status).work_in_progress = true;
 // [#protodoc-title: Rate Limit Quota Service (RLQS)]
 
 service RateLimitQuotaService {
-  rpc StreamRateLimitQuotas(stream RateLimitQuotaUsageReport)
+  rpc StreamRateLimitQuotas(stream RateLimitQuotaUsageReports)
       returns (stream RateLimitQuotaAssignments) {
   }
 }
 
-message RateLimitQuotaUsageReport {
+message RateLimitQuotaUsageReports {
   // [#next-free-field: 7]
-  message GroupQuotaUsage {
-    // The name of the group.
-    string group_name = 1;
+  message BucketQuotaUsage {
+    // Bucket id for which request quota usage is reported.
+    BucketId bucket_id = 1 [(validate.rules).message = {required: true}];
 
-    // Subgroup key.
-    string subgroup_key = 2;
+    // Auto-incrementing number used to deduplicate usage reports.
+    uint64 report_id = 2;
 
     // Time elapsed since the last report.
     google.protobuf.Duration time_elapsed = 3;
@@ -53,41 +55,66 @@ message RateLimitQuotaUsageReport {
   // All quota requests must specify the domain. This enables sharing the quota
   // server between different applications without fear of overlap.
   // E.g., "envoy".
+  // TODO(sergiitk): add a note about domain being optional after the first
+  // report.
   string domain = 1;
 
-  repeated GroupQuotaUsage group_usage = 2;
+  // A list of quota usage reports for each bucket.
+  repeated BucketQuotaUsage bucket_quota_usages = 2
+      [(validate.rules).repeated = {min_items: 1}];
 }
 
 message RateLimitQuotaAssignments {
   // [#next-free-field: 7]
   message QuotaAssignment {
-    string group_name = 1;
-
-    string subgroup_key = 2;
-
-    // The number of requests allowed per each refill_rate interval.
-    // If unset, no limit.
-    // If set to 0, always throttle.
-    google.protobuf.Int64Value num_requests = 3;
-
-    // The interval at which the number of requests is reset to num_requests.
-    google.protobuf.Duration refill_rate = 4;
+    // Bucket id for which this quota is granted.
+    BucketId bucket_id = 1 [(validate.rules).message = {required: true}];
 
     // The timestamp at which the server issued the quota.
     // Assignment with timestamps older than the active assignment
     // must be discarded.
-    google.protobuf.Timestamp timestamp = 5;
+    google.protobuf.Timestamp assignment_timestamp = 2;
 
-    // A duration after which the assignment expires.
-    google.protobuf.Duration time_to_live = 6;
+    // A duration after which the assignment should be considered expired if it
+    // hasn't received a new value.
+    // If unset, the assignment has no expiration date.
+    google.protobuf.Duration assignment_time_to_live = 3;
+
+    // Rate limiter used to allow or deny the requests matched to the bucket.
+    // If unset, no limit.
+    RateLimiter rate_limiter = 4;
   }
 
-  // An ordered list of assignments to be applied to the quota groups.
-  // When a quota assignments
-  // is issued, and it's different from group's current assignment,
+  // An ordered list of assignments to be applied to the quota buckets.
+  // When the quota is different from bucket's active assignment,
   // the data plane must immediately end the active assignment, and
   // report the usage. Exceptions:
-  // - There's no active assignment for the group
-  // - The only difference between the assignment in the expiration
+  // - There's no active assignment for the bucket.
+  // - Only assignment_timestamp field changes.
   repeated QuotaAssignment quota_assignment = 1;
+}
+
+message RateLimiter {
+  message Unlimited { }
+
+  message LimitAll { }
+
+  oneof limiter {
+    // Allow infinite requests.
+    Unlimited unlimited = 1;
+
+    // Allow no requests.
+    LimitAll limit_all = 2;
+
+    // Allow the same number of requests as the number of tokens available in
+    // the token bucket.
+    type.v3.TokenBucket token_bucket = 3;
+  }
+}
+
+
+// The identifier for the bucket. Used to match the bucket on the control
+// plane (RLQS server), and on the data plane (RLQS client).
+message BucketId {
+  map<string, string> bucket = 1;
 }
