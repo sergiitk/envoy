@@ -60,12 +60,10 @@ message RateLimitQuotaUsageReports {
   string domain = 1;
 
   // A list of quota usage reports for each bucket.
-  repeated BucketQuotaUsage bucket_quota_usages = 2
-      [(validate.rules).repeated = {min_items: 1}];
+  repeated BucketQuotaUsage bucket_quota_usages = 2 [(validate.rules).repeated = {min_items: 1}];
 }
 
 message RateLimitQuotaAssignments {
-  // [#next-free-field: 7]
   message QuotaAssignment {
     // Bucket id for which this quota is granted.
     BucketId bucket_id = 1 [(validate.rules).message = {required: true}];
@@ -95,9 +93,11 @@ message RateLimitQuotaAssignments {
 }
 
 message RateLimiter {
-  message Unlimited { }
+  message Unlimited {
+  }
 
-  message LimitAll { }
+  message LimitAll {
+  }
 
   oneof limiter {
     // Allow infinite requests.
@@ -111,7 +111,6 @@ message RateLimiter {
     type.v3.TokenBucket token_bucket = 3;
   }
 }
-
 
 // The identifier for the bucket. Used to match the bucket on the control
 // plane (RLQS server), and on the data plane (RLQS client).

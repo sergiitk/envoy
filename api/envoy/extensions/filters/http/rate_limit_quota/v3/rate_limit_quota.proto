@@ -38,24 +38,22 @@ message RateLimitQuota {
 
   // Unified matchers.
   xds.type.matcher.v3.Matcher bucket_matchers = 3;
-
-  // TODO(sergiitk): preview mode matchers.
 }
 
 message RateLimitQuotaBucketSettings {
-
   // How the data plane should treat requests matching this group
   // without active quota assignment, for example:
   // - quota server hasn't returned the first quota assignment
   // - quota assignment has expired, and the server hasn't returned
   //   the new assignment.
   message NoAssignmentBehavior {
-
     // Allow requests until the bucket is assigned a quota.
-    message Allow { }
+    message Allow {
+    }
 
     // Deny requests until the bucket is assigned a quota.
-    message Deny { }
+    message Deny {
+    }
 
     // Queue requests until we receive a quota assignment for the bucket.
     // The data plane maintains a separate queue for each bucket that has
@@ -83,7 +81,9 @@ message RateLimitQuotaBucketSettings {
 
     oneof behavior {
       Allow allow = 1;
+
       Deny deny = 2;
+
       Queue queue = 3;
     }
   }
@@ -108,12 +108,12 @@ message RateLimitQuotaBucketSettings {
   message BucketIdBuilder {
     message ValueBuilder {
       oneof value_specifier {
-
         string string_value = 1;
 
         config.core.v3.TypedExtensionConfig custom_value_builder = 2;
       }
     }
+
     map<string, ValueBuilder> group = 1;
   }
 
@@ -129,7 +129,7 @@ message RateLimitQuotaBucketSettings {
   // with the given reporting internal.
   google.protobuf.Duration reporting_interval = 2 [(validate.rules).duration = {
     required: true
-    gt {nanos: 1000000}  // 0.001 seconds
+    gt {nanos: 1000000}
   }];
 
   // TODO(sergiitk): behavior on unset
@@ -137,8 +137,6 @@ message RateLimitQuotaBucketSettings {
 
   // When unset, use NoAssignmentBehavior.ALLOW.
   NoAssignmentBehavior no_assignment_behavior = 4;
-
-  // TODO(sergiitk): finish fallback behavior
 }
 
 message RateLimitQuotaPerRoute {
