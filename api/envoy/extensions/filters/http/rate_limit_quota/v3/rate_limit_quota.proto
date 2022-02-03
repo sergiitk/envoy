@@ -28,6 +28,8 @@ option (xds.annotations.v3.file_status).work_in_progress = true;
 // [#extension: envoy.filters.http.rate_limit_quota]
 
 message RateLimitQuota {
+  // [#comment:TODO(sergiitk): preview mode matchers]
+
   // Configuration for the gRPC service that hosts an external rate limit
   // provider. If not specified, any calls to the rate limit service will
   // immediately return success.
@@ -41,6 +43,8 @@ message RateLimitQuota {
 }
 
 message RateLimitQuotaBucketSettings {
+  // [#comment:TODO(sergiitk): finish fallback behavior]
+
   // How the data plane should treat requests matching this group
   // without active quota assignment, for example:
   // - quota server hasn't returned the first quota assignment
@@ -90,7 +94,7 @@ message RateLimitQuotaBucketSettings {
 
   message DenyResponseSettings {
     // Status code to use to fail requests when quota is exceeded.
-    // TODO: figure out the right defaults for these fields!
+    // [#comment:TODO: figure out the right defaults for these fields!]
     int32 http_status_code = 1;
     // For HTTP requests.
 
@@ -127,12 +131,13 @@ message RateLimitQuotaBucketSettings {
   // to the server, signaling it's subscribed for the quota assignments
   // in that bucket. After that, the data plane is to submit the report
   // with the given reporting internal.
+  // [#comment:nanos to seconds = 0.001 seconds]
   google.protobuf.Duration reporting_interval = 2 [(validate.rules).duration = {
     required: true
     gt {nanos: 1000000}
   }];
 
-  // TODO(sergiitk): behavior on unset
+  // [#comment:TODO(sergiitk): behavior on unset]
   DenyResponseSettings deny_response_settings = 3;
 
   // When unset, use NoAssignmentBehavior.ALLOW.
@@ -140,5 +145,5 @@ message RateLimitQuotaBucketSettings {
 }
 
 message RateLimitQuotaPerRoute {
-  // TODO(sergiitk): finish
+  // [#comment:TODO(sergiitk): finish]
 }

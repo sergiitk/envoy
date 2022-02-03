@@ -55,8 +55,7 @@ message RateLimitQuotaUsageReports {
   // All quota requests must specify the domain. This enables sharing the quota
   // server between different applications without fear of overlap.
   // E.g., "envoy".
-  // TODO(sergiitk): add a note about domain being optional after the first
-  // report.
+  // [#comment:TODO(sergiitk): add a note about domain being optional after the first report]
   string domain = 1;
 
   // A list of quota usage reports for each bucket.
