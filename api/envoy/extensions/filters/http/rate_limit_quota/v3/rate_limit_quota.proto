@@ -142,6 +142,20 @@ message RateLimitQuotaBucketSettings {
 
   // When unset, use NoAssignmentBehavior.ALLOW.
   NoAssignmentBehavior no_assignment_behavior = 4;
+
+  enum FallbackBehavior {
+    UNSPECIFIED = 0;
+
+    FALLBACK_OPEN = 1;
+
+    FALLBACK_CLOSED = 2;
+
+    FALLBACK_TO_LAST_ASSIGNMENT = 3;
+  }
+
+  // Specifies a behavior when the bucket's assignment has expired, and
+  // hasn't been refresh due to server's unavailability.
+  FallbackBehavior fallback_behavior = 5;
 }
 
 message RateLimitQuotaPerRoute {
