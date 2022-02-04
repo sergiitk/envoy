@@ -35,7 +35,7 @@ message RateLimitStrategy {
     uint64 requests_per_time_unit = 1;
 
     // The unit of time.
-    type.v3.RateLimitUnit time_unit = 2 [(validate.rules).enum = {defined_only: true}];
+    RateLimitUnit time_unit = 2 [(validate.rules).enum = {defined_only: true}];
   }
 
   oneof strategy {
@@ -48,7 +48,7 @@ message RateLimitStrategy {
     // Limit the requests by consuming tokens from the Token Bucket.
     // Allow the same number of requests as the number of tokens available in
     // the token bucket.
-    type.v3.TokenBucket token_bucket = 3;
+    TokenBucket token_bucket = 3;
   }
 }
 
@@ -58,9 +58,6 @@ message RateLimitStrategy {
 // to impose constraints on the maximum number of pending requests
 // in the queue.
 message RateLimitStrategyQueue {
-  // Limit the length of the queue.
-  uint32 max_length = 1 [(validate.rules).uint32 = {gte: 1}];
-
   // Controls the order in which requests are discarded when the queue length
   // is reached.
   enum QueueSpillover {
@@ -72,6 +69,9 @@ message RateLimitStrategyQueue {
     // When the queue limit is reached, discard new requests.
     DISCARD_NEW = 1;
   }
+
+  // Limit the length of the queue.
+  uint32 max_length = 1 [(validate.rules).uint32 = {gte: 1}];
 
   // When the length is reached, whether discard old requests or new requests.
   QueueSpillover spillover_order = 2;

@@ -43,6 +43,7 @@ message RateLimitQuota {
   xds.type.matcher.v3.Matcher bucket_matchers = 3;
 }
 
+// [#next-free-field: 7]
 message RateLimitQuotaBucketSettings {
   // Configures the behavior when the first request has been matched to
   // the bucket, and the data plane is waiting for the RLQS to return the
@@ -73,7 +74,7 @@ message RateLimitQuotaBucketSettings {
   // hasn't been refreshed due to server's unavailability.
   message FallbackBehavior {
     message FallbackLastAssignment {
-      // Limit the time tha last assignment is used as a fallback.
+      // Limit the time the last assignment is used as a fallback.
       // [#comment:TODO(sergiitk): what to do after that?]
       google.protobuf.Duration time_to_live = 1;
     }
@@ -81,7 +82,7 @@ message RateLimitQuotaBucketSettings {
     oneof behavior {
       option (validate.required) = true;
 
-      // Preconfigured local rate limit strategy.
+      // Pre-configured local rate limit strategy.
       type.v3.RateLimitStrategy fallback_rate_limit = 1;
 
       // Reuse last quota assignment associated to the bucket.
@@ -149,7 +150,8 @@ message RateLimitQuotaBucketSettings {
   // A duration after which, if no requests are matched to the bucket,
   // the bucket is considered inactive. The client is to send a message to
   // the server indicating it's no longer tracking the bucket.
-  google.protobuf.Duration bucket_inactivity_timeout = 6 [(validate.rules).duration = {required: true}];
+  google.protobuf.Duration bucket_inactivity_timeout = 6
+      [(validate.rules).duration = {required: true}];
 }
 
 message RateLimitQuotaPerRoute {
