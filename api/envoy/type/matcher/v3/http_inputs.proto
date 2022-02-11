@@ -60,3 +60,36 @@ message HttpResponseTrailerMatchInput {
   string header_name = 1
       [(validate.rules).string = {well_known_regex: HTTP_HEADER_NAME strict: false}];
 }
+
+// Match input indicates that matching is done on the set of Envoy
+// :ref:`attributes <arch_overview_attributes>`.
+// The attributes will be exposed via Common Expression Language runtime to associated CEL matcher,
+// or via ``get_property`` ABI method to associated Wasm extension based matcher.
+message HttpCelMatchInput {
+  // [#next-free-field: 7]
+  message Attributes {
+    // Include ``request.*`` attributes.
+    bool request = 1;
+
+    // Include ``response.*`` attributes.
+    // Only available after the request completes.
+    bool response = 2;
+
+    // Include connection attributes: ``connection.*``, ``source.*``, ``destination.*``.
+    // Only available once the downstream connection is established.
+    bool connection = 3;
+
+    // Include ``upstream.*`` attributes.
+    // Only available once the upstream connection is established.
+    bool upstream = 4;
+
+    // Include the data exchanged between filters: `metadata`, `filter_state`.
+    bool metadata = 5;
+
+    // Include extra attributes are available to Wasm extensions.
+    bool wasm = 6;
+  }
+
+  // The attributes to be exposed to the matcher.
+  Attributes attributes = 1 [(validate.rules).message = {required: true}];
+}
