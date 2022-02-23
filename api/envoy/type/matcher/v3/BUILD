@@ -9,5 +9,8 @@ api_proto_package(
         "//envoy/annotations:pkg",
         "//envoy/type/v3:pkg",
         "@com_github_cncf_udpa//udpa/annotations:pkg",
+        "@com_github_cncf_udpa//xds/annotations/v3:pkg",
+        "@com_google_googleapis//google/api/expr/v1alpha1:checked_proto",
+        "@com_google_googleapis//google/api/expr/v1alpha1:syntax_proto",
     ],
 )

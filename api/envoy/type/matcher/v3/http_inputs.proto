@@ -61,6 +61,7 @@ message HttpResponseTrailerMatchInput {
       [(validate.rules).string = {well_known_regex: HTTP_HEADER_NAME strict: false}];
 }
 
+// [#not-implemented-hide:]
 // Match input indicates that matching is done on the set of Envoy
 // :ref:`attributes <arch_overview_attributes>`.
 // The attributes will be exposed via Common Expression Language runtime to associated CEL matcher,
