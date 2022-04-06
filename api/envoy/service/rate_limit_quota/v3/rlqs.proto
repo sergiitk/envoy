@@ -6,8 +6,6 @@ import "envoy/extensions/common/ratelimit/v3/ratelimit_quota.proto";
 import "envoy/type/v3/ratelimit_strategy.proto";
 
 import "google/protobuf/duration.proto";
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
 
 import "udpa/annotations/status.proto";
 import "validate/validate.proto";
