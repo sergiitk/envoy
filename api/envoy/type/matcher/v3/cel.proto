@@ -26,19 +26,26 @@ option (xds.annotations.v3.file_status).work_in_progress = true;
 // The match is ``true``, iff the result of the evaluation is a bool AND true.
 // In all other cases, the match is ``false``, including but not limited to: non-bool types, false,
 // null, int(1), etc.
+// [#extension: envoy.matching.inputs.cel]
 message CelMatcher {
-  oneof expression_specifier {
-    option (validate.required) = true;
+  CelExpression match_expression = 1 [(validate.rules).message = {required: true}];
+}
 
-    // CEL expression in a text form.
-    string cel_expression = 1;
+// TODO(sergiitk): docs
+// Must return string...
+// [#extension: envoy.matching.common_inputs.cel]
+message CelSelector {
+  CelExpression select_expression = 1 [(validate.rules).message = {required: true}];
+}
 
-    // Parsed expression in abstract syntax tree (AST) form.
-    google.api.expr.v1alpha1.Expr cel_expression_parsed = 2
-        [(validate.rules).message = {required: true}];
+// TODO(sergiitk): at least one of?
+message CelExpression {
+  // CEL expression in a text form.
+  string expr_raw = 1;
 
-    // Parsed expression in abstract syntax tree (AST) form that has been successfully type checked.
-    google.api.expr.v1alpha1.CheckedExpr cel_expression_type_checked = 3
-        [(validate.rules).message = {required: true}];
-  }
+  // Parsed expression in abstract syntax tree (AST) form.
+  google.api.expr.v1alpha1.Expr expr_parsed = 2;
+
+  // Parsed expression in abstract syntax tree (AST) form that has been successfully type checked.
+  google.api.expr.v1alpha1.CheckedExpr expr_type_checked = 3;
 }
