@@ -5,8 +5,6 @@ package envoy.type.matcher.v3;
 import "google/api/expr/v1alpha1/checked.proto";
 import "google/api/expr/v1alpha1/syntax.proto";
 
-import "xds/annotations/v3/status.proto";
-
 import "udpa/annotations/status.proto";
 import "validate/validate.proto";
 
@@ -14,10 +12,7 @@ option java_package = "io.envoyproxy.envoy.type.matcher.v3";
 option java_outer_classname = "CelProto";
 option java_multiple_files = true;
 option go_package = "github.com/envoyproxy/go-control-plane/envoy/type/matcher/v3;matcherv3";
-option (udpa.annotations.file_status).package_version_status = ACTIVE;
-option (xds.annotations.v3.file_status).work_in_progress = true;
-
-// [#not-implemented-hide:]
+option (udpa.annotations.file_status).package_version_status = FROZEN;
 
 // [#protodoc-title: Common Expression Language matcher]
 
@@ -26,14 +21,12 @@ option (xds.annotations.v3.file_status).work_in_progress = true;
 // The match is ``true``, iff the result of the evaluation is a bool AND true.
 // In all other cases, the match is ``false``, including but not limited to: non-bool types, false,
 // null, int(1), etc.
-// [#extension: envoy.matching.inputs.cel]
 message CelMatcher {
   CelExpression match_expression = 1 [(validate.rules).message = {required: true}];
 }
 
-// TODO(sergiitk): docs
+// TODO(sergiitk): docs, extension category
 // Must return string...
-// [#extension: envoy.matching.common_inputs.cel]
 message CelSelector {
   CelExpression select_expression = 1 [(validate.rules).message = {required: true}];
 }
