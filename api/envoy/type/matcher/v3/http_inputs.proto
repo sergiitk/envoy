@@ -61,7 +61,7 @@ message HttpResponseTrailerMatchInput {
       [(validate.rules).string = {well_known_regex: HTTP_HEADER_NAME strict: false}];
 }
 
-// Specifies that matching should be performed on the set of `HTTP attributes
+// Specifies that matching should be performed on the set of :ref:`HTTP attributes
 // <arch_overview_attributes>`.
 //
 // The attributes will be exposed via `Common Expression Language

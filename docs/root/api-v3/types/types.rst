@@ -5,6 +5,7 @@ Types
   :glob:
   :maxdepth: 2
 
+  ../type/v3/cel.proto
   ../type/v3/hash_policy.proto
   ../type/v3/http.proto
   ../type/v3/http_status.proto
