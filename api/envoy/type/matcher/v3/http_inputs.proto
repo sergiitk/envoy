@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package envoy.type.matcher.v3;
 
+import "envoy/type/v3/cel.proto";
+
 import "udpa/annotations/status.proto";
 import "validate/validate.proto";
 
@@ -61,13 +63,35 @@ message HttpResponseTrailerMatchInput {
       [(validate.rules).string = {well_known_regex: HTTP_HEADER_NAME strict: false}];
 }
 
-// Specifies that matching should be performed on the set of :ref:`HTTP attributes
-// <arch_overview_attributes>`.
+// Specifies that matching will be performed on the set of :ref:`HTTP attributes
+// <arch_overview_attributes>` using `Common Expression Language
+// <https://github.com/google/cel-spec>`_ (CEL) expression.
 //
-// The attributes will be exposed via `Common Expression Language
-// <https://github.com/google/cel-spec>`_ runtime to associated CEL matcher,
-// as well as via ``get_property`` ABI method to associated Wasm extension matcher.
-// [#comment:TODO(sergiitk): Link to unified matching docs.]
-// [#comment:TODO(sergiitk): Add extension category.]
-message HttpAttributesMatchInput {
+// The resulting input is the result of evaluating the CEL program. The result should be one of the
+// supported types. Refer to the following table for the supported CEL result types, and known
+// compatible matchers.
+//
+// .. list-table::
+//   :widths: 25 75
+//   :header-rows: 1
+//
+//   * - CEL result type
+//     - Compatible Matchers
+//   * - ``string``
+//     - :ref:`StringMatcher <envoy_v3_api_msg_.xds.type.matcher.v3.StringMatcher>`
+//   * - ``bool``
+//     - TBD
+//
+// Refer to :ref:`Unified Matcher API <envoy_v3_api_msg_.xds.type.matcher.v3.Matcher>` documentation
+// for usage details.
+//
+// .. attention::
+//
+//   In case CEL expression raises an error, the result of the evaluation is interpreted
+//   short-circuited "no match". Associated Matcher is not evaluated.
+//
+// [#extension: envoy.matching.inputs.http_attributes]
+message HttpAttributesCelMatchInput {
+  // CEL expression to evaluate.
+  type.v3.CelExpression expr = 1 [(validate.rules).message = {required: true}];
 }
