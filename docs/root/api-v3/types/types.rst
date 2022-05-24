@@ -5,7 +5,6 @@ Types
   :glob:
   :maxdepth: 2
 
-  ../type/v3/cel.proto
   ../type/v3/hash_policy.proto
   ../type/v3/http.proto
   ../type/v3/http_status.proto
@@ -17,7 +16,6 @@ Types
   ../type/v3/token_bucket.proto
   ../type/http/v3/cookie.proto
   ../type/http/v3/path_transformation.proto
-  ../type/matcher/v3/cel.proto
   ../type/matcher/v3/metadata.proto
   ../type/matcher/v3/node.proto
   ../type/matcher/v3/number.proto
