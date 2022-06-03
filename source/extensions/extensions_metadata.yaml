@@ -278,6 +278,11 @@ envoy.filters.http.original_src:
   - envoy.filters.http
   security_posture: robust_to_untrusted_downstream
   status: alpha
+envoy.filters.http.rate_limit_quota:
+  categories:
+  - envoy.filters.http
+  security_posture: robust_to_untrusted_downstream
+  status: stable
 envoy.filters.http.ratelimit:
   categories:
   - envoy.filters.http

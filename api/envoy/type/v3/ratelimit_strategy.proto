@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package envoy.type.v3;
+
+import "envoy/type/v3/ratelimit_unit.proto";
+import "envoy/type/v3/token_bucket.proto";
+
+import "google/protobuf/duration.proto";
+
+import "udpa/annotations/status.proto";
+import "validate/validate.proto";
+
+option java_package = "io.envoyproxy.envoy.type.v3";
+option java_outer_classname = "RatelimitStrategyProto";
+option java_multiple_files = true;
+option go_package = "github.com/envoyproxy/go-control-plane/envoy/type/v3;typev3";
+option (udpa.annotations.file_status).package_version_status = FROZEN;
+
+// [#protodoc-title: Rate Limit Strategies]
+
+message RateLimitStrategy {
+  // Choose between allow all and deny all.
+  enum BlanketRule {
+    ALLOW_ALL = 0;
+    DENY_ALL = 1;
+  }
+
+  // Limit the number of requests per second.
+  //
+  // ``RequestsPerTimeUnit`` strategy does not demand any specific rate limiting algorithm to be
+  // used (in contrast to the :ref:`TokenBucket <envoy_v3_api_msg_type.v3.TokenBucket>`,
+  // for example). It implies that the implementation details of rate limiting algorithm are
+  // irrelevant as long as the configured number of "requests per time unit" is achieved.
+  //
+  // Note that the ``TokenBucket`` is still a valid implementation of the ``RequestsPerTimeUnit``
+  // strategy, and may be chosen to enforce it. However, there's no guarantee that it will be
+  // the ``TokenBucket`` in particular, and not the Leaky Bucket, the Sliding Window, or any other
+  // rate limiting algorithm that fulfills the requirements.
+  message RequestsPerTimeUnit {
+    // The number of requests per unit of time to allow. Requests over the limit
+    // are denied.
+    // If set to 0, deny all (equivalent to BlanketRule.DENY_ALL).
+    uint64 requests_per_time_unit = 1;
+
+    // The unit of time. Ignored when requests_per_time_unit is 0 (deny all).
+    RateLimitUnit time_unit = 2;
+  }
+
+  oneof strategy {
+    option (validate.required) = true;
+
+    // Allow or Deny the requests.
+    // If unset, allow all.
+    BlanketRule blanket_rule = 1;
+
+    // A number of requests per time unit, f.e. requests per second.
+    RequestsPerTimeUnit requests_per_time_unit = 2;
+
+    // Limit the requests by consuming tokens from the Token Bucket.
+    // Allow the same number of requests as the number of tokens available in
+    // the token bucket.
+    TokenBucket token_bucket = 3;
+  }
+}
